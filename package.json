@@ -3,9 +3,7 @@
   "version": "1.6.5",
   "description": "Modular component system for WordPress",
   "main": "gulpfile.js",
-  "dependencies": {
-    "webpack": "^4.43.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^7.0.1",
