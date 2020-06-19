@@ -21,10 +21,7 @@
     "gulp": "gulp"
   },
   "author": "Kristoffer Svanmark",
-  "licenses": {
-    "type": "MIT",
-    "url": "http://opensource.org/licenses/MIT"
-  },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": ""
