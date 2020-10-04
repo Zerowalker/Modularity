@@ -100,9 +100,8 @@ function check_dependency()
     }
 }
 
-check_dependency();
-
 // Start application
 add_action('plugins_loaded', function () {
+    check_dependency();
     new Modularity\App();
 }, 20);
