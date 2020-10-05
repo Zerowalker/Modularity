@@ -1,62 +1,67 @@
-Modularity = Modularity || {};
-Modularity.Editor = Modularity.Editor || {};
+export default (function ($) {
+	let hasErrors = false;
+	const errorClass = 'validation-error';
 
-Modularity.Editor.Validate = (function ($) {
+	function Validate() {
+		this.handleEvents();
+	}
 
-    var hasErrors = false;
-    var errorClass = 'validation-error';
+	/**
+	 * Run validation methods
+	 *
+	 * @return {void}
+	 */
+	Validate.prototype.run = function () {
+		hasErrors = false;
+		this.checkRequired();
+	};
 
-    function Validate() {
-        this.handleEvents();
-    }
+	/**
+	 * Check required fileds is not empty
+	 *
+	 * @return {void}
+	 */
+	Validate.prototype.checkRequired = function () {
+		const required = $('[required]');
+		required.removeClass(errorClass);
 
-    /**
-     * Run validation methods
-     * @return {void}
-     */
-    Validate.prototype.run = function () {
-        hasErrors = false;
-        this.checkRequired();
-    };
+		required.each(function (index, element) {
+			if ($(element).val().length === 0) {
+				$(element).parents('li').addClass(errorClass);
 
-    /**
-     * Check required fileds is not empty
-     * @return void
-     */
-    Validate.prototype.checkRequired = function () {
-        var required = $('[required]');
-        required.removeClass(errorClass);
+				$(element).one('change', function (e) {
+					$(e.target).parents('li').removeClass(errorClass);
+				});
 
-        required.each(function (index, element) {
-            if ($(element).val().length === 0) {
-                $(element).parents('li').addClass(errorClass);
+				hasErrors = true;
+			}
+		});
+	};
 
-                $(element).one('change', function (e) {
-                    $(e.target).parents('li').removeClass(errorClass);
-                });
+	/**
+	 * Handle events
+	 *
+	 * @return {void}
+	 */
+	Validate.prototype.handleEvents = function () {
+		$(document).on(
+			'click',
+			'#modularity-mb-editor-publish #publish',
+			function () {
+				this.run();
 
-                hasErrors = true;
-            }
-        }.bind(this));
-    };
+				if (hasErrors) {
+					$('#modularity-mb-editor-publish .spinner').css(
+						'visibility',
+						'hidden'
+					);
+					return false;
+				}
 
-    /**
-     * Handle events
-     * @return void
-     */
-    Validate.prototype.handleEvents = function () {
-        $(document).on('click', '#modularity-mb-editor-publish #publish', function (e) {
-            this.run();
+				return true;
+			}.bind(this)
+		);
+	};
 
-            if (hasErrors) {
-                $('#modularity-mb-editor-publish .spinner').css('visibility', 'hidden');
-                return false;
-            }
-
-            return true;
-        }.bind(this));
-    };
-
-    return new Validate();
-
+	return new Validate();
 })(jQuery);

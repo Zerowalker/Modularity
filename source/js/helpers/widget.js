@@ -1,60 +1,70 @@
-Modularity = Modularity || {};
-Modularity.Helpers = Modularity.Helpers || {};
+/* eslint-disable no-implicit-globals */
+/* eslint-disable no-undef */
+export default (function ($) {
+	let editingWidget = false;
 
-Modularity.Helpers.Widget = (function ($) {
+	function Widget() {
+		$(function () {
+			/* Import */
+			$(document).on(
+				'click',
+				'.modularity-js-thickbox-widget-import-widget',
+				function (e) {
+					e.preventDefault();
 
-    var editingWidget = false;
+					editingWidget = $(e.target).parents('.widget-inside');
 
-    function Widget() {
-        $(function(){
+					const importUrl = Modularity.Editor.Module.getImportUrl({
+						postType: $(e.target)
+							.parents('.widget-inside')
+							.find('.modularity-widget-module-type select')
+							.val(),
+					});
 
-            /* Import */
-            $(document).on('click', '.modularity-js-thickbox-widget-import-widget', function (e) {
-                e.preventDefault();
+					Modularity.Editor.Module.editingModule = $(e.target).closest(
+						'.widget-inside'
+					);
 
-                editingWidget = $(e.target).parents('.widget-inside');
+					Modularity.Editor.Thickbox.postAction = 'import-widget';
+					Modularity.Prompt.Modal.open(importUrl);
+				}
+			);
 
-                var importUrl = Modularity.Editor.Module.getImportUrl({
-                    postType: $(e.target).parents('.widget-inside').find('.modularity-widget-module-type select').val()
-                });
+			/* Edit */
+			$(document).on('click', '.modularity-js-thickbox-open-widget', function (
+				e
+			) {
+				e.preventDefault();
 
-                Modularity.Editor.Module.editingModule = $(e.target).closest('.widget-inside');
+				const el = $(e.target).closest('a');
+				if (el.attr('href').indexOf('post.php') > -1) {
+					Modularity.Editor.Thickbox.postAction = 'edit';
+				}
 
-                Modularity.Editor.Thickbox.postAction = 'import-widget';
-                Modularity.Prompt.Modal.open(importUrl);
-            });
+				editingModule = $(e.target).closest('li');
 
+				Modularity.Prompt.Modal.open($(e.target).closest('a').attr('href'));
+			});
+		});
+	}
 
-            /* Edit */
-            $(document).on('click', '.modularity-js-thickbox-open-widget', function (e) {
-                e.preventDefault();
+	Widget.prototype.isEditingWidget = function () {
+		return editingWidget;
+	};
 
-                var el = $(e.target).closest('a');
-                if (el.attr('href').indexOf('post.php') > -1) {
-                    Modularity.Editor.Thickbox.postAction = 'edit';
-                }
+	Widget.prototype.updateWidget = function (widget, data) {
+		$(widget).find('.modularity-widget-module-id-span').html(data.post_id);
+		$(widget).find('.modularity-widget-module-id').val(data.post_id);
+		$(widget)
+			.find('.modularity-widget-module-edit')
+			.attr(
+				'href',
+				'post.php?post=' + data.post_id + '&action=edit&is_thickbox=true'
+			)
+			.removeClass('hidden');
+		$(widget).find('.modularity-widget-module-title-span').html(data.title);
+		$(widget).find('.modularity-widget-module-title').val(data.title);
+	};
 
-                editingModule = $(e.target).closest('li');
-
-                Modularity.Prompt.Modal.open($(e.target).closest('a').attr('href'));
-            }.bind(this));
-
-
-        }.bind(this));
-    }
-
-    Widget.prototype.isEditingWidget = function () {
-        return editingWidget;
-    };
-
-    Widget.prototype.updateWidget = function (widget, data) {
-        $(widget).find('.modularity-widget-module-id-span').html(data.post_id);
-        $(widget).find('.modularity-widget-module-id').val(data.post_id);
-        $(widget).find('.modularity-widget-module-edit').attr('href','post.php?post=' + data.post_id + '&action=edit&is_thickbox=true').removeClass('hidden');
-        $(widget).find('.modularity-widget-module-title-span').html(data.title);
-        $(widget).find('.modularity-widget-module-title').val(data.title);
-    };
-
-    return new Widget();
-
+	return new Widget();
 })(jQuery);

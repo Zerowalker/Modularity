@@ -1,0 +1,18 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {}
+  },
+
+  "extends": [
+    "esnext",
+    "esnext/style-guide",
+    "plugin:@wordpress/eslint-plugin/recommended"
+  ],
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jquery": true
+  }
+}
